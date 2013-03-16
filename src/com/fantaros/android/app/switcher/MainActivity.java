@@ -2,21 +2,24 @@ package com.fantaros.android.app.switcher;
 
 import java.lang.reflect.Method;
 
-import com.fantaros.android.api.AndroidCommand;
-import android.os.Bundle;
-import android.os.IBinder;
 import android.app.Activity;
-import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.app.admin.DevicePolicyManager;
 import android.app.admin.IDevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+
+import com.fantaros.android.api.AndroidCommand;
 
 public class MainActivity extends Activity {
+	private static final String TAG = "Switcher";
+
 	private Button shutdown;
 	private Button reboot;
 	private Button lock;
@@ -55,14 +58,7 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
 	// 锁屏
-
 	public void lock() {
 		try {
 			// 通过反射获取到sdk隐藏的服务
@@ -76,21 +72,17 @@ public class MainActivity extends Activity {
 					MainActivity.class);
 			// 注册权限
 			if (service != null) {
-				// 判断自定义的广播接受者 是不是被注册成deviceadmin的权限
-				//if (!service.isAdminActive(mAdminName)) {
-					Intent intent = new Intent(
-							DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-					intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
-							mAdminName);
-					startActivity(intent);
-				//}
+				// 注册成deviceadmin的权限
+				Intent intent = new Intent(
+						DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+				intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN,
+						mAdminName);
+				startActivity(intent);
 				// 调用服务实现锁屏
 				service.lockNow();
-				// 设置解锁密码
-				// service.resetPassword("123", 0);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			Log.e(TAG, "Lock screen failed!", e);
 		}
 	}
 

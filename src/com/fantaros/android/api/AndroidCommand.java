@@ -2,9 +2,12 @@ package com.fantaros.android.api;
 
 import java.io.DataOutputStream;
 
+import android.util.Log;
+
 public final class AndroidCommand {
-	public static String lastError = "";
-	
+	private static final String TAG = "Android Command";
+	private static final String VERSION = "0.1";
+
 	public static int execRooted(String command) {
 		return exec(command, true);
 	}
@@ -20,7 +23,7 @@ public final class AndroidCommand {
 				androidCommand = Runtime.getRuntime().exec("su");
 			} else {
 				androidCommand = Runtime.getRuntime().exec(
-						"echo AutoCommand v0.1");
+						"echo AutoCommand v" + VERSION);
 			}
 			DataOutputStream output = new DataOutputStream(
 					androidCommand.getOutputStream());
@@ -30,15 +33,14 @@ public final class AndroidCommand {
 			output.flush();
 			androidCommand.waitFor();
 			return androidCommand.exitValue();
-		} catch (Exception e) {
-			e.printStackTrace();
-			lastError = e.getLocalizedMessage();
+		} catch (Throwable e) {
+			Log.e(TAG, "Command failed : The original command is " + command, e);
 			return -1;
 		}
 	}
 
 	protected static boolean isRooted() {
-		int i = exec("echo test Root", true);
+		int i = exec("echo ROOT_TEST", true);
 		if (i != -1) {
 			return true;
 		} else {
