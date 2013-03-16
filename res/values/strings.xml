@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">开关</string>
+    <string name="action_settings">Settings</string>
+    <string name="reboot">重启</string>
+    <string name="shutdown">关机</string>
+    <string name="lock">锁屏</string>
+
+</resources>
